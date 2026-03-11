@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>LSSD - Acceso Rápido</title>
+    <style>
+        :root {
+            --beige: #F5F5DC;
+            --olive: #556B2F;
+            --olive-dark: #3e4f22;
+            --yellow: #FFD700;
+            --gold: #DAA520;
+            --text-dark: #333;
+            --text-light: #fff;
+            --bg-panel: #fdfdf9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--beige);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: var(--bg-panel);
+            border: 2px solid var(--olive);
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 1400px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Encabezado Principal */
+        .header {
+            background-color: var(--olive);
+            text-align: center;
+            padding: 25px 20px;
+            border-bottom: 5px solid var(--gold);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .header-banner {
+            max-height: 90px;
+            width: auto;
+            max-width: 95%;
+            display: block;
+            filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3));
+        }
+
+        .header h1 {
+            margin: 0;
+            color: var(--text-light);
+            font-size: 22px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Botón de Logout */
+        .btn-logout {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background-color: transparent;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            font-size: 13px;
+        }
+
+        .btn-logout:hover {
+            background-color: var(--gold);
+            color: var(--olive-dark);
+        }
+
+        /* Vistas */
+        #login-view {
+            padding: 40px;
+            max-width: 500px;
+            margin: 40px auto;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Formularios */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: var(--olive-dark);
+            font-size: 14px;
+        }
+
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: #fff;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 5px rgba(218, 165, 32, 0.4);
+        }
+
+        button {
+            background-color: var(--olive);
+            color: var(--text-light);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background-color 0.3s;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: var(--olive-dark);
+        }
+
+        .btn-gold {
+            background-color: var(--gold);
+            color: var(--text-dark);
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-gold:hover {
+            background-color: var(--yellow);
+        }
+
+        .btn-red {
+            background-color: #d9534f;
+            color: white;
+            width: 100%;
+        }
+
+        .btn-red:hover {
+            background-color: #c9302c;
+        }
+
+        /* Tabs para PC */
+        .tabs {
+            display: flex;
+            background-color: var(--olive);
+            border-bottom: 4px solid var(--gold);
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            padding: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s;
+            border-radius: 0;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .tab-btn:last-child {
+            border-right: none;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background-color: var(--olive-dark);
+            color: var(--yellow);
+        }
+
+        /* Layout de columnas para PC */
+        .tab-content {
+            display: none;
+            padding: 30px;
+            min-height: 500px;
+        }
+
+        .tab-content.active {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .col-form {
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            align-self: start;
+        }
+
+        .col-output {
+            display: flex;
+            flex-direction: column;
+        }
+
+        textarea {
+            flex-grow: 1;
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            resize: none;
+            box-sizing: border-box;
+            font-family: 'Consolas', monospace;
+            font-size: 15px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--olive);
+        }
+
+        /* Dispatch List Rediseñado para PC */
+        .dispatch-list {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(48%, 1fr));
+            gap: 25px;
+        }
+
+        .dispatch-item {
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            padding: 20px;
+            border-top: 5px solid var(--olive);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            gap: 15px;
+        }
+
+        .dispatch-item button {
+            width: 100%;
+        }
+
+        .dispatch-item textarea {
+            width: 100%;
+            height: 80px;
+            cursor: text;
+        }
+
+        /* Estilo para los Switches Ovalados */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 54px;
+            height: 28px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #fff; 
+            border: 2px solid #ccc;
+            transition: .4s;
+            border-radius: 34px; 
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #aaa;
+            transition: .4s;
+            border-radius: 50%; 
+        }
+
+        input:checked + .slider {
+            background-color: #4CAF50; 
+            border-color: #4CAF50;
+        }
+
+        input:checked + .slider:before {
+            background-color: white;
+            transform: translateX(26px);
+        }
+
+        /* Notificación In-App */
+        #notification {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            background-color: var(--olive-dark);
+            color: var(--text-light);
+            padding: 15px 25px;
+            border-radius: 4px;
+            font-weight: bold;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+            overflow: hidden;
+            z-index: 2000;
+            font-size: 16px;
+        }
+
+        #notification.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #notification::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background-color: var(--yellow);
+            width: 100%;
+        }
+
+        #notification.show::after {
+            animation: timer 2s linear forwards;
+        }
+
+        @keyframes timer {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        /* Contenedor dinámico de integrantes */
+        .integrante-box {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--gold);
+        }
+
+        .integrante-box-header {
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        .integrante-box-header label {
+            color: var(--olive-dark);
+            margin-bottom: 0;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <button id="logout-btn" class="hidden btn-logout" onclick="cerrarSesion()">Cerrar Sesión</button>
+            <img src="https://i.imgur.com/dhfFMoN.png" alt="LSSD Banner" class="header-banner">
+            <h1>LSSD - Acceso Rápido</h1>
+        </div>
+
+        <div id="notification">Texto copiado exitosamente</div>
+
+        <div id="login-view">
+            <h2 style="color: var(--olive); text-align: center; margin-bottom: 30px; text-transform: uppercase;">Acceso de Unidad</h2>
+            
+            <div class="form-group">
+                <label for="login-callsign">Callsign de la Unidad:</label>
+                <input type="text" id="login-callsign" placeholder="Ej. 26-X-1">
+            </div>
+            
+            <div class="form-group">
+                <label for="login-integrantes">Cantidad de Integrantes:</label>
+                <select id="login-integrantes" onchange="actualizarCamposIntegrantes()">
+                    <option value="1">1 Integrante</option>
+                    <option value="2">2 Integrantes</option>
+                </select>
+            </div>
+
+            <div id="integrantes-container">
+                </div>
+
+            <button onclick="iniciarSesion()" style="width: 100%; margin-top: 15px; padding: 15px; font-size: 16px;">Iniciar Turno</button>
+        </div>
+
+        <div id="app-view" class="hidden">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="openTab(event, 'tab-bluecheck')">Bluecheck ID</button>
+                <button class="tab-btn" onclick="openTab(event, 'tab-registro')">Registro Unidad</button>
+                <button class="tab-btn" onclick="openTab(event, 'tab-reabastecimiento')">Reabastecimiento</button>
+                <button class="tab-btn" onclick="openTab(event, 'tab-radio')">Radio</button>
+                <button class="tab-btn" onclick="openTab(event, 'tab-dispatch')">Dispatch</button>
+            </div>
+
+            <div id="tab-bluecheck" class="tab-content active">
+                <div class="col-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>HASH (#) (4 letras)</label>
+                            <input type="text" id="bc-hash" maxlength="4" placeholder="Ej. ABCD" style="text-transform: uppercase;">
+                        </div>
+                        <div class="form-group">
+                            <label>Edad</label>
+                            <input type="number" id="bc-edad">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" id="bc-nombre">
+                        </div>
+                        <div class="form-group">
+                            <label>Apellido</label>
+                            <input type="text" id="bc-apellido">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nacionalidad (Opcional)</label>
+                            <input type="text" id="bc-nacionalidad">
+                        </div>
+                        <div class="form-group">
+                            <label>Residencia</label>
+                            <input type="text" id="bc-residencia">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Evidencia</label>
+                        <input type="text" id="bc-evidencia" placeholder="URL o descripción">
+                    </div>
+                </div>
+                
+                <div class="col-output">
+                    <textarea id="bc-output" readonly placeholder="El texto generado aparecerá aquí. Haz clic en el botón inferior para copiarlo..."></textarea>
+                    <button class="btn-gold" onclick="generarBluecheck()">Generar y Copiar Bluecheck</button>
+                </div>
+            </div>
+
+            <div id="tab-registro" class="tab-content">
+                <div class="col-form">
+                    <div class="form-group">
+                        <label>Matrícula del Vehículo</label>
+                        <input type="text" id="reg-matricula" placeholder="Ej. 26-123">
+                    </div>
+                </div>
+                
+                <div class="col-output">
+                    <textarea id="reg-output" readonly placeholder="El texto generado aparecerá aquí..."></textarea>
+                    <button class="btn-gold" onclick="generarRegistro()">Generar y Copiar Registro</button>
+                </div>
+            </div>
+
+            <div id="tab-reabastecimiento" class="tab-content">
+                <div class="col-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Matrícula (##-###)</label>
+                            <input type="text" id="reab-matricula" pattern="[0-9]{2}-[0-9]{3}" placeholder="Ej. 12-345" oninput="this.value = this.value.replace(/[^0-9-]/g, '')">
+                        </div>
+                        <div class="form-group">
+                            <label>Modelo</label>
+                            <select id="reab-modelo">
+                                <option value="Stanier">Stanier</option>
+                                <option value="Buffalo">Buffalo</option>
+                                <option value="Scout">Scout</option>
+                                <option value="Granger">Granger</option>
+                                <option value="Grúa">Grúa</option>
+                                <option value="Hakuchou">Hakuchou</option>
+                                <option value="Chopera">Chopera</option>
+                                <option value="BF400">BF400</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Lugar</label>
+                        <select id="reab-lugar">
+                            <option value="Sandy Shores">11 - Sandy Shores</option>
+                            <option value="Paleto">26 - Paleto Bay</option>
+                            <option value="Davis">28 - Davis</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Kit médicos (0-4)</label>
+                            <input type="number" id="reab-kits" min="0" max="4" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Vendajes (0-4)</label>
+                            <input type="number" id="reab-vendajes" min="0" max="4" placeholder="0">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-output">
+                    <textarea id="reab-output" readonly placeholder="El texto generado aparecerá aquí..."></textarea>
+                    <button class="btn-gold" onclick="generarReabastecimiento()">Generar y Copiar Reabastecimiento</button>
+                </div>
+            </div>
+
+            <div id="tab-radio" class="tab-content">
+                <div class="col-form">
+                    <h3 style="color: var(--olive); margin-top:0; border-bottom: 2px solid var(--gold); padding-bottom: 10px;">Comunicaciones Rápidas</h3>
+                    <button class="btn-gold" style="margin-bottom:15px;" 
+                        onmouseenter="hoverRadio('callsign')" 
+                        onmouseleave="leaveRadio()" 
+                        onclick="copiarRadio('callsign')">Llamar SCC (Callsign)</button>
+                        
+                    <button class="btn-gold" style="margin-bottom:15px;" 
+                        onmouseenter="hoverRadio('10-8')" 
+                        onmouseleave="leaveRadio()" 
+                        onclick="copiarRadio('10-8')">Entrar en Servicio (10-8)</button>
+                        
+                    <button class="btn-gold" style="margin-bottom:15px;" 
+                        onmouseenter="hoverRadio('10-7')" 
+                        onmouseleave="leaveRadio()" 
+                        onclick="copiarRadio('10-7')">Fuera de Servicio (10-7)</button>
+                    
+                    <button class="btn-red" style="margin-top:20px;" onclick="toggleDisparos()">Código 998 (Disparos)</button>
+                </div>
+                
+                <div class="col-output">
+                    <div style="margin-bottom: 25px;">
+                        <label style="color: var(--olive); font-size: 14px; text-transform: uppercase;">Vista Previa / Último Mensaje</label>
+                        <textarea id="rad-preview" readonly placeholder="Pasa el cursor sobre un botón rápido para ver el mensaje aquí..." style="height: 60px; background-color: #f0f0f0; border-style: dashed;"></textarea>
+                    </div>
+
+                    <div id="form-disparos" class="hidden" style="background: #fff; padding: 25px; border-radius: 8px; border: 2px solid #d9534f; box-shadow: 0 4px 10px rgba(217, 83, 79, 0.15);">
+                        <h3 style="color: #d9534f; margin-top:0; text-transform: uppercase;">Reporte de Disparos (998)</h3>
+                        
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" id="rad-1033" style="width: auto; transform: scale(1.2);"> 
+                                <strong>Solicitar 10-33 (Silencio en la radio)</strong>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ubicación</label>
+                            <input type="text" id="rad-ubicacion" placeholder="Ej. Grove Street, Davis">
+                        </div>
+
+                        <div class="form-row" style="margin-top: 20px;">
+                            <div class="form-group" style="display:flex; flex-direction: column; gap:8px;">
+                                <label style="margin:0;">Ambulancia</label>
+                                <label class="switch">
+                                  <input type="checkbox" id="rad-amb" checked>
+                                  <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="form-group" style="display:flex; flex-direction: column; gap:8px;">
+                                <label style="margin:0;">Supervisor</label>
+                                <label class="switch">
+                                  <input type="checkbox" id="rad-sup" checked>
+                                  <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button onclick="generarDisparos()" class="btn-red" style="margin-top: 20px;">Generar y Copiar Reporte</button>
+
+                        <div id="out-disparos-container" class="hidden" style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 20px;">
+                            <div id="box-1033" class="hidden" style="margin-bottom: 15px;">
+                                <label style="color: #d9534f;">Mensaje 1 (10-33):</label>
+                                <textarea id="rad-out-1033" readonly style="height: 50px; margin-bottom: 5px;"></textarea>
+                                <button onclick="copiarElemento('rad-out-1033')" class="btn-gold" style="padding: 8px; font-size: 12px; margin-top: 0;">Copiar Solo 10-33</button>
+                            </div>
+                            <div id="box-998">
+                                <label style="color: #d9534f;">Mensaje Principal (998):</label>
+                                <textarea id="rad-out-998" readonly style="height: 60px; margin-bottom: 5px;"></textarea>
+                                <button onclick="copiarElemento('rad-out-998')" class="btn-gold" style="padding: 8px; font-size: 12px; margin-top: 0;">Copiar Solo 998</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-dispatch" class="tab-content">
+                <div class="dispatch-list">
+                    <div class="dispatch-item">
+                        <button onclick="copiarElemento('disp-saes')">SAES Ambulancia</button>
+                        <textarea id="disp-saes" readonly>SCC a SAES CC, Deputies requieren una ambulancia en </textarea>
+                    </div>
+
+                    <div class="dispatch-item">
+                        <button onclick="copiarElemento('disp-lspd')">LSPD Persecución</button>
+                        <textarea id="disp-lspd" readonly>#SCC a LSPD BCC, Unidades en persecución vehicular ingresando a la ciudad de Los Santos.</textarea>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let callsignActual = "";
+        let ultimoMensajeRadio = ""; // Guarda el último mensaje clickeado para mantenerlo en la vista previa
+
+        document.addEventListener("DOMContentLoaded", () => {
+            actualizarCamposIntegrantes();
+        });
+
+        function actualizarCamposIntegrantes() {
+            const num = document.getElementById('login-integrantes').value;
+            const container = document.getElementById('integrantes-container');
+            container.innerHTML = ''; 
+
+            for (let i = 1; i <= num; i++) {
+                container.innerHTML += `
+                    <div class="integrante-box">
+                        <div class="integrante-box-header">
+                            <label>Datos Integrante ${i}</label>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nombre</label>
+                                <input type="text" id="int${i}-nombre" placeholder="Nombre completo">
+                            </div>
+                            <div class="form-group">
+                                <label>Serial</label>
+                                <input type="text" id="int${i}-serial" placeholder="Nº Serial">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function iniciarSesion() {
+            const inputCallsign = document.getElementById('login-callsign').value;
+            const numIntegrantes = document.getElementById('login-integrantes').value;
+            
+            if(!inputCallsign.trim()) {
+                alert("Por favor ingrese un callsign válido.");
+                return;
+            }
+
+            for (let i = 1; i <= numIntegrantes; i++) {
+                const nombre = document.getElementById(`int${i}-nombre`).value;
+                const serial = document.getElementById(`int${i}-serial`).value;
+                if (!nombre.trim() || !serial.trim()) {
+                    alert(`Por favor complete el Nombre y Serial del Integrante ${i}.`);
+                    return;
+                }
+            }
+            
+            callsignActual = inputCallsign.trim();
+
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('app-view').classList.remove('hidden');
+            document.getElementById('logout-btn').classList.remove('hidden');
+        }
+
+        function cerrarSesion() {
+            callsignActual = ""; 
+            ultimoMensajeRadio = "";
+            document.getElementById('rad-preview').value = "";
+
+            document.getElementById('app-view').classList.add('hidden');
+            document.getElementById('login-view').classList.remove('hidden');
+            document.getElementById('logout-btn').classList.add('hidden');
+
+            document.getElementById('login-callsign').value = '';
+            actualizarCamposIntegrantes(); 
+            
+            document.getElementById('form-disparos').classList.add('hidden');
+            document.getElementById('out-disparos-container').classList.add('hidden');
+        }
+
+        function openTab(evt, tabName) {
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+            const tabBtns = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabBtns.length; i++) {
+                tabBtns[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        function mostrarNotificacion() {
+            const notif = document.getElementById('notification');
+            notif.classList.remove('show');
+            void notif.offsetWidth; 
+            notif.classList.add('show');
+            setTimeout(() => {
+                notif.classList.remove('show');
+            }, 2000);
+        }
+
+        function copiarAlPortapapeles(texto) {
+            navigator.clipboard.writeText(texto).then(() => {
+                mostrarNotificacion();
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+                alert("Hubo un error al copiar al portapapeles.");
+            });
+        }
+
+        function copiarElemento(id) {
+            const texto = document.getElementById(id).value;
+            copiarAlPortapapeles(texto);
+        }
+
+        // ==========================================
+        // FUNCIONES DE RADIO (CON VISTA PREVIA)
+        // ==========================================
+        
+        // Función centralizada para obtener el texto según el botón
+        function obtenerTextoRadio(tipo) {
+            if(tipo === 'callsign') return `! ${callsignActual}, SCC, `;
+            if(tipo === '10-8') return `! ${callsignActual}, 10-8.`;
+            if(tipo === '10-7') return `! ${callsignActual}, 10-7.`;
+            return "";
+        }
+
+        // Muestra la vista previa al pasar el mouse
+        function hoverRadio(tipo) {
+            const texto = obtenerTextoRadio(tipo);
+            document.getElementById('rad-preview').value = texto;
+            document.getElementById('rad-preview').style.borderStyle = "solid";
+            document.getElementById('rad-preview').style.borderColor = "var(--olive)";
+        }
+
+        // Restaura el último texto copiado al quitar el mouse
+        function leaveRadio() {
+            document.getElementById('rad-preview').value = ultimoMensajeRadio;
+            document.getElementById('rad-preview').style.borderStyle = ultimoMensajeRadio ? "solid" : "dashed";
+            document.getElementById('rad-preview').style.borderColor = ultimoMensajeRadio ? "#ccc" : "";
+        }
+
+        // Copia el texto y lo fija en la vista previa
+        function copiarRadio(tipo) {
+            const texto = obtenerTextoRadio(tipo);
+            ultimoMensajeRadio = texto; // Guarda en memoria
+            document.getElementById('rad-preview').value = texto;
+            copiarAlPortapapeles(texto);
+        }
+
+        function toggleDisparos() {
+            const panel = document.getElementById('form-disparos');
+            panel.classList.toggle('hidden');
+        }
+
+        function generarDisparos() {
+            const solicita1033 = document.getElementById('rad-1033').checked;
+            const ubicacion = document.getElementById('rad-ubicacion').value.trim();
+            const solicitaAmb = document.getElementById('rad-amb').checked;
+            const solicitaSup = document.getElementById('rad-sup').checked;
+
+            let extraText = "";
+            if (solicitaAmb && solicitaSup) {
+                extraText = " dame una ambulancia y un supervisor.";
+            } else if (solicitaAmb) {
+                extraText = " dame una ambulancia.";
+            } else if (solicitaSup) {
+                extraText = " dame un supervisor.";
+            } else {
+                extraText = ".";
+            }
+
+            const texto998 = `! ${callsignActual}, 9 9 8, 9 9 8, ${ubicacion}${extraText}`;
+            const texto1033 = `! ${callsignActual}, SCC, 10-33, dame el parche.`;
+
+            const box1033 = document.getElementById('box-1033');
+            const box998 = document.getElementById('box-998');
+            
+            document.getElementById('rad-out-1033').value = texto1033;
+            document.getElementById('rad-out-998').value = texto998;
+
+            document.getElementById('out-disparos-container').classList.remove('hidden');
+
+            let textoFinalACopiar = "";
+            if (solicita1033) {
+                box1033.classList.remove('hidden');
+                textoFinalACopiar = `${texto1033}\n${texto998}`; 
+            } else {
+                box1033.classList.add('hidden');
+                textoFinalACopiar = texto998;
+            }
+
+            copiarAlPortapapeles(textoFinalACopiar);
+        }
+
+        // ==========================================
+        // FUNCIONES EXISTENTES
+        // ==========================================
+
+        function generarBluecheck() {
+            const hash = document.getElementById('bc-hash').value.toUpperCase();
+            const nombre = document.getElementById('bc-nombre').value;
+            const apellido = document.getElementById('bc-apellido').value;
+            const edad = document.getElementById('bc-edad').value;
+            const nacionalidad = document.getElementById('bc-nacionalidad').value;
+            const residencia = document.getElementById('bc-residencia').value;
+            const evidencia = document.getElementById('bc-evidencia').value;
+
+            let nacionalidadTexto = nacionalidad.trim() ? ` - ${nacionalidad}` : "";
+            const resultado = `#${hash} - ${nombre} ${apellido} - ${edad} años${nacionalidadTexto} - ${residencia} / ${evidencia}`;
+            
+            document.getElementById('bc-output').value = resultado;
+            copiarAlPortapapeles(resultado);
+        }
+
+        function generarRegistro() {
+            const matricula = document.getElementById('reg-matricula').value;
+            const options = { timeZone: 'America/Santiago', hour: '2-digit', minute: '2-digit', hour12: false };
+            const horaChile = new Intl.DateTimeFormat('es-CL', options).format(new Date());
+
+            const resultado = `**Integrantes (@)**:
+**Hora inicio**: ${horaChile}
+**Hora fin**: 
+**Matricula (26-XXX)**: ${matricula}`;
+
+            document.getElementById('reg-output').value = resultado;
+            copiarAlPortapapeles(resultado);
+        }
+
+        function generarReabastecimiento() {
+            const matricula = document.getElementById('reab-matricula').value;
+            const modelo = document.getElementById('reab-modelo').value;
+            const lugar = document.getElementById('reab-lugar').value; 
+            
+            const kits = parseInt(document.getElementById('reab-kits').value) || 0;
+            const vendajes = parseInt(document.getElementById('reab-vendajes').value) || 0;
+
+            let textoMaterial = [];
+            
+            if (kits > 0) {
+                textoMaterial.push(`x${kits} :kitverde:`);
+            }
+            if (vendajes > 0) {
+                textoMaterial.push(`x${vendajes} :kitamarillo:`);
+            }
+
+            let stringMaterial = textoMaterial.length > 0 ? textoMaterial.join(" y ") : "Ninguno";
+
+            const resultado = `**SOLICITUD DE REABASTECIMIENTO **
+
+**Matricula y Modelo**: ${matricula} - ${modelo}
+**Lugar**: ${lugar}
+**Material a reabastecer**: ${stringMaterial}`;
+
+            document.getElementById('reab-output').value = resultado;
+            copiarAlPortapapeles(resultado);
+        }
+    </script>
+</body>
+</html>
