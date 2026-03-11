@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
+    <link rel="icon" type="image/png" href="https://i.imgur.com/dhfFMoN.png">
     <title>LSSD - Acceso Rápido</title>
     <style>
         :root {
@@ -421,7 +422,7 @@
             
             <div class="form-group">
                 <label for="login-callsign">Callsign de la Unidad:</label>
-                <input type="text" id="login-callsign" placeholder="Ej. 26-X-1">
+                <input type="text" id="login-callsign" placeholder="Ej: 260 Adam">
             </div>
             
             <div class="form-group">
@@ -649,7 +650,7 @@
 
     <script>
         let callsignActual = "";
-        let ultimoMensajeRadio = ""; // Guarda el último mensaje clickeado para mantenerlo en la vista previa
+        let ultimoMensajeRadio = "";
 
         document.addEventListener("DOMContentLoaded", () => {
             actualizarCamposIntegrantes();
@@ -760,10 +761,9 @@
         }
 
         // ==========================================
-        // FUNCIONES DE RADIO (CON VISTA PREVIA)
+        // FUNCIONES DE RADIO
         // ==========================================
         
-        // Función centralizada para obtener el texto según el botón
         function obtenerTextoRadio(tipo) {
             if(tipo === 'callsign') return `! ${callsignActual}, SCC, `;
             if(tipo === '10-8') return `! ${callsignActual}, 10-8.`;
@@ -771,7 +771,6 @@
             return "";
         }
 
-        // Muestra la vista previa al pasar el mouse
         function hoverRadio(tipo) {
             const texto = obtenerTextoRadio(tipo);
             document.getElementById('rad-preview').value = texto;
@@ -779,17 +778,15 @@
             document.getElementById('rad-preview').style.borderColor = "var(--olive)";
         }
 
-        // Restaura el último texto copiado al quitar el mouse
         function leaveRadio() {
             document.getElementById('rad-preview').value = ultimoMensajeRadio;
             document.getElementById('rad-preview').style.borderStyle = ultimoMensajeRadio ? "solid" : "dashed";
             document.getElementById('rad-preview').style.borderColor = ultimoMensajeRadio ? "#ccc" : "";
         }
 
-        // Copia el texto y lo fija en la vista previa
         function copiarRadio(tipo) {
             const texto = obtenerTextoRadio(tipo);
-            ultimoMensajeRadio = texto; // Guarda en memoria
+            ultimoMensajeRadio = texto; 
             document.getElementById('rad-preview').value = texto;
             copiarAlPortapapeles(texto);
         }
